@@ -118,14 +118,22 @@ def test_03_create_new_webcast(driver, env):
     webcast_time = wait.until(EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Select time']")))
     webcast_time.click()
     #select time
-    select_webcast_time = wait.until(EC.presence_of_element_located((By.XPATH, "//ul[@data-type='hour']//div[@class='ant-picker-time-panel-cell-inner'][normalize-space()='03']")))
+    select_webcast_time = wait.until(EC.presence_of_element_located(
+        (By.XPATH, 
+         "//ul[@data-type='hour']//div[@class='ant-picker-time-panel-cell-inner'][normalize-space()='03']")
+        )
+    )
     driver.execute_script("arguments[0].click();", select_webcast_time)
 
     # select webcast duration
     webcast_duration = wait.until(EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Select duration']")))
     webcast_duration.click()
     #select duration
-    select_webcast_duration = wait.until(EC.presence_of_element_located((By.XPATH, "(//div[@class='ant-picker-time-panel-cell-inner'][normalize-space()='01'])[3]")))
+    select_webcast_duration = wait.until(EC.presence_of_element_located(
+        (By.XPATH, 
+         "(//div[@class='ant-picker-time-panel-cell-inner'][normalize-space()='01'])[3]")
+        )
+    )
     driver.execute_script("arguments[0].click();", select_webcast_duration)
 
     # time.sleep(5)
@@ -144,7 +152,9 @@ def test_03_create_new_webcast(driver, env):
     driver.execute_script("arguments[0].click();", next_btn_3)
 
     # create webcast btn
-    next_btn_3 = wait.until(EC.presence_of_element_located((By.XPATH, "//button[@class='save-button d-flex flex-row justify-items-center']")))
+    next_btn_3 = wait.until(EC.presence_of_element_located(
+        (By.XPATH, "//button[@class='save-button d-flex flex-row justify-items-center']"))
+    )
     driver.execute_script("arguments[0].click();", next_btn_3)
 
     time.sleep(3)
@@ -160,7 +170,7 @@ def test_04_activate_and_manage_webcast(driver, env):
     def get_webcast_summaries():
         return wait.until(
             EC.presence_of_all_elements_located((By.CLASS_NAME, "webcast-summary"))
-            )
+        )
 
     try:
         webcast_summaries = get_webcast_summaries()
@@ -216,35 +226,107 @@ def test_04_activate_and_manage_webcast(driver, env):
 
 
 def test_05_upload_slide_and_video(driver, env):
+    """Test: Upload slide and video content in both Preview and Live modes."""
     wait = WebDriverWait(driver, 30)
 
-    # Slide upload
+    # ----------------------------------------------------------------------------------------------------------------------
+    # STEP 1: Upload Slide in PREVIEW Mode
+    # ----------------------------------------------------------------------------------------------------------------------
     time.sleep(1)
-    content_btn = wait.until(EC.presence_of_element_located((By.XPATH, "(//button[normalize-space()='Content'])[1]")))
+    content_btn = wait.until(
+        EC.presence_of_element_located((By.XPATH, "(//button[normalize-space()='Content'])[1]"))
+    )
     driver.execute_script("arguments[0].click();", content_btn)
-    
-    #upload slide
-    slide_upload = wait.until(EC.presence_of_element_located((By.XPATH, "(//input[@type='file'])[1]")))
+
+    # Upload slide
+    slide_upload = wait.until(
+        EC.presence_of_element_located((By.XPATH, "(//input[@type='file'])[1]"))
+    )
     driver.execute_script("arguments[0].style.display = 'block';", slide_upload)
     slide_upload.send_keys(env["slide_path"])
-    
-    # preview save button 
+
+    # Save preview slide
     time.sleep(1)
-    preview_save_btn = wait.until(EC.presence_of_element_located((By.XPATH, "(//button[normalize-space()='Save'])[1]")))
+    preview_save_btn = wait.until(
+        EC.presence_of_element_located((By.XPATH, "(//button[normalize-space()='Save'])[1]"))
+    )
     driver.execute_script("arguments[0].click();", preview_save_btn)
 
-    #  wait for the popup to 
+    # Wait for success popup
     time.sleep(5)
     wait.until(EC.presence_of_element_located((By.ID, "swal2-html-container")))
     print(f"✅ Slide uploaded: {env['slide_path']}")
 
-    # Video upload
-    video_upload = wait.until(EC.presence_of_element_located((By.XPATH, "(//input[@type='file'])[2]")))
+    # ----------------------------------------------------------------------------------------------------------------------
+    # STEP 2: Switch Status to LIVE and Upload Slide
+    # ----------------------------------------------------------------------------------------------------------------------
+    status_dropdown = wait.until(
+        EC.presence_of_element_located((By.XPATH, "//span[@title='Preview']"))
+    )
+    status_dropdown.click()
+
+    status_live = wait.until(
+        EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Live')]"))
+    )
+    time.sleep(1)
+    status_live.click()
+
+    # Upload slide again for LIVE webcast
+    time.sleep(1)
+    content_btn = wait.until(
+        EC.presence_of_element_located((By.XPATH, "(//button[normalize-space()='Content'])[1]"))
+    )
+    driver.execute_script("arguments[0].click();", content_btn)
+
+    slide_upload = wait.until(
+        EC.presence_of_element_located((By.XPATH, "(//input[@type='file'])[1]"))
+    )
+    driver.execute_script("arguments[0].style.display = 'block';", slide_upload)
+    slide_upload.send_keys(env["slide_path"])
+
+    # Save live slide
+    time.sleep(1)
+    live_save_btn = wait.until(
+        EC.presence_of_element_located((By.XPATH, "//button[normalize-space()='Save']"))
+    )
+    live_save_btn.click()
+
+    # Wait for success popup
+    time.sleep(5)
+    wait.until(EC.presence_of_element_located((By.ID, "swal2-html-container")))
+
+    # ----------------------------------------------------------------------------------------------------------------------
+    # STEP 3: Switch Back to PREVIEW and Upload Video
+    # ----------------------------------------------------------------------------------------------------------------------
+    status_dropdown = wait.until(
+        EC.presence_of_element_located((By.XPATH, "//span[@title='Live']"))
+    )
+    status_dropdown.click()
+
+    status_preview = wait.until(
+        EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Preview')]"))
+    )
+    status_preview.click()
+
+    # Upload video
+    video_upload = wait.until(
+        EC.presence_of_element_located((By.XPATH, "(//input[@type='file'])[2]"))
+    )
+    driver.execute_script("arguments[0].scrollIntoView(true);", video_upload)
     driver.execute_script("arguments[0].style.display = 'block';", video_upload)
     video_upload.send_keys(env["video_path"])
-    driver.find_element(By.XPATH, "//button[normalize-space()='Save']").click()
+
+    # Save preview video
+    preview_save_btn = wait.until(
+        EC.presence_of_element_located((By.XPATH, "//button[normalize-space()='Save']"))
+    )
+    driver.execute_script("arguments[0].click();", preview_save_btn)
+
+    # Wait for success popup
+    time.sleep(5)
     wait.until(EC.presence_of_element_located((By.ID, "swal2-html-container")))
-    print(f"✅ Video uploaded: {env['video_path']}")
+
+    print("✅ Webcast content uploaded successfully.")
 
 
 def test_06_configure_webcast_layout(driver, env):
@@ -278,8 +360,8 @@ def test_06_configure_webcast_layout(driver, env):
     for key, xpath in switches.items():
         switch_btn = wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
         driver.execute_script("arguments[0].scrollIntoView(true);", switch_btn)
+        time.sleep(1)
         driver.execute_script("arguments[0].click();", switch_btn)
-        time.sleep(0.5)
 
     # Save layout
     save_btn = wait.until(EC.presence_of_element_located((By.XPATH, "//button[normalize-space()='Save']")))
@@ -289,33 +371,3 @@ def test_06_configure_webcast_layout(driver, env):
     print("✅ Webcast layout configured successfully.")
 
 
-def test_07_toggle_webcast_status(driver, env):
-    """Toggle webcast status between Preview and Live, upload content for each status."""
-    wait = WebDriverWait(driver, 30)
-
-    status_map = [("Preview", env["slide_path"]), ("Live", env["slide_path"])]
-
-    for status_name, slide_file in status_map:
-        # Click status dropdown
-        status_dropdown = wait.until(EC.presence_of_element_located((By.XPATH, f"//span[@title='{status_name}']")))
-        status_dropdown.click()
-
-        # Toggle to opposite status
-        new_status = "Live" if status_name == "Preview" else "Preview"
-        new_status_elem = wait.until(EC.presence_of_element_located((By.XPATH, f"//div[contains(text(),'{new_status}')]")))
-        time.sleep(1)
-        new_status_elem.click()
-        print(f"✅ Webcast status changed to {new_status}")
-
-        # Upload slide
-        content_btn = wait.until(EC.presence_of_element_located((By.XPATH, "(//button[normalize-space()='Content'])[1]")))
-        driver.execute_script("arguments[0].click();", content_btn)
-
-        slide_upload = wait.until(EC.presence_of_element_located((By.XPATH, "(//input[@type='file'])[1]")))
-        driver.execute_script("arguments[0].style.display = 'block';", slide_upload)
-        slide_upload.send_keys(slide_file)
-
-        save_btn = wait.until(EC.presence_of_element_located((By.XPATH, "(//button[normalize-space()='Save'])[1]")))
-        driver.execute_script("arguments[0].click();", save_btn)
-        wait.until(EC.presence_of_element_located((By.ID, "swal2-html-container")))
-        print(f"✅ Slide uploaded for status {new_status}: {slide_file}")
