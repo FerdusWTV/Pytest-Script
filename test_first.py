@@ -9,7 +9,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-# ----------------------- FIXTURES -----------------------q
+# ----------------------- FIXTURES ------------------------
 
 @pytest.fixture(scope="session")
 def driver():
@@ -292,7 +292,7 @@ def test_05_upload_slide_and_video(driver, env):
     live_save_btn.click()
 
     # Wait for success popup
-    time.sleep(5)
+    # time.sleep(5)
     wait.until(EC.presence_of_element_located((By.ID, "swal2-html-container")))
 
     # ----------------------------------------------------------------------------------------------------------------------
@@ -301,13 +301,15 @@ def test_05_upload_slide_and_video(driver, env):
     status_dropdown = wait.until(
         EC.presence_of_element_located((By.XPATH, "//span[@title='Live']"))
     )
-    status_dropdown.click()
+    # status_dropdown.click()
+    driver.execute_script('arguments[0].click();', status_dropdown)
 
     status_preview = wait.until(
         EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Preview')]"))
     )
-    status_preview.click()
-
+    # status_preview.click()
+    driver.execute_script('arguments[0].click();', status_preview)
+    
     # Upload video
     video_upload = wait.until(
         EC.presence_of_element_located((By.XPATH, "(//input[@type='file'])[2]"))
@@ -369,5 +371,3 @@ def test_06_configure_webcast_layout(driver, env):
     driver.execute_script("arguments[0].click();", save_btn)
     wait.until(EC.presence_of_element_located((By.ID, "swal2-html-container")))
     print("✅ Webcast layout configured successfully.")
-
-
