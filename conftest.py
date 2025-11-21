@@ -1,4 +1,46 @@
 import selenium
+import pytest
+import os
+from dotenv import load_dotenv
+
+# -----------------------------
+# addoption for changing env in the terminal
+# -----------------------------
+def pytest_addoption(parser):
+    parser.addoption(
+        "--env",
+        action="store",
+        default="dev",
+        help="Environment to run tests against: dev or prod",
+    )
+
+
+# ----------------------- ENV ------------------------
+@pytest.fixture(scope="session")
+def config(request):
+    load_dotenv()
+    selected_env = request.config.getoption("--env")
+
+    if selected_env == "prod":
+        return {
+            "url": os.getenv("URL_PROD"),
+            "email": os.getenv("EMAIL_PROD"),
+            "password": os.getenv("PASSWORD_PROD"),
+            "target_portal": os.getenv("TARGET_PORTAL"),
+            "new_webcast_title": os.getenv("NEW_WEBCAST_TITLE"),
+            "slide_path": os.getenv("SLIDE_PATH"),
+            "video_path": os.getenv("VIDEO_PATH"),
+        }
+
+    return {
+        "url": os.getenv("URL"),
+        "email": os.getenv("EMAIL"),
+        "password": os.getenv("PASSWORD"),
+        "target_portal": os.getenv("TARGET_PORTAL"),
+        "new_webcast_title": os.getenv("NEW_WEBCAST_TITLE"),
+        "slide_path": os.getenv("SLIDE_PATH"),
+        "video_path": os.getenv("VIDEO_PATH"),
+    }
 
 # -----------------------------
 # Show Selenium version in console

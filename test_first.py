@@ -32,26 +32,27 @@ def driver():
     driver.quit()
 
 
-@pytest.fixture(scope="session")
-def env():
-    """Load environment variables once."""
-    load_dotenv()
-    return {
-        "url": os.getenv("URL"),
-        "email": os.getenv("EMAIL"),
-        "password": os.getenv("PASSWORD"),
-        "target_portal": os.getenv("TARGET_PORTAL"),
-        "new_webcast_title": os.getenv("NEW_WEBCAST_TITLE"),
-        "slide_path": os.getenv("SLIDE_PATH"),
-        "video_path": os.getenv("VIDEO_PATH"),
-    }
+# @pytest.fixture(scope="session")
+# def env():
+#     """Load environment variables once."""
+#     load_dotenv()
+#     return {
+#         "url": os.getenv("URL"),
+#         "email": os.getenv("EMAIL"),
+#         "password": os.getenv("PASSWORD"),
+#         "target_portal": os.getenv("TARGET_PORTAL"),
+#         "new_webcast_title": os.getenv("NEW_WEBCAST_TITLE"),
+#         "slide_path": os.getenv("SLIDE_PATH"),
+#         "video_path": os.getenv("VIDEO_PATH"),
+#     }
+
 
 # ----------------------- TEST CASES -----------------------
 
-def test_01_login(driver, env):
-    driver.get(env["url"])
-    driver.find_element(By.ID, 'email').send_keys(env["email"])
-    driver.find_element(By.ID, 'password').send_keys(env["password"])
+def test_01_login(driver, config):
+    driver.get(config["url"])
+    driver.find_element(By.ID, 'email').send_keys(config["email"])
+    driver.find_element(By.ID, 'password').send_keys(config["password"])
     driver.find_element(By.CLASS_NAME, 'login-button').click()
 
     wait = WebDriverWait(driver, 60)
@@ -63,11 +64,11 @@ def test_01_login(driver, env):
     print(f"✅ Login successful: {welcome_text}")
 
 
-def test_02_open_target_portal(driver, env):
+def test_02_open_target_portal(driver, config):
     wait = WebDriverWait(driver, 30)
     search_box = wait.until(EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Search portal']")))
     search_box.click()
-    search_box.send_keys(env["target_portal"])
+    search_box.send_keys(config["target_portal"])
 
     edit_btn = wait.until(EC.presence_of_element_located((By.XPATH, "//button[normalize-space()='Edit']")))
     driver.execute_script("arguments[0].click();", edit_btn)
@@ -80,7 +81,7 @@ def test_02_open_target_portal(driver, env):
     print(f"✅ Opened portal: {portal_title}")
 
 
-def test_03_create_new_webcast(driver, env):
+def test_03_create_new_webcast(driver, config):
     wait = WebDriverWait(driver, 30)
 
     time.sleep(2)
@@ -99,7 +100,7 @@ def test_03_create_new_webcast(driver, env):
 
     # Create New Webcast form fillup (setp-1)
     webcast_title = wait.until(EC.presence_of_element_located((By.XPATH, "//input[@id='streamName']")))
-    webcast_title.send_keys(env["new_webcast_title"])
+    webcast_title.send_keys(config["new_webcast_title"])
     
     time.sleep(3)
     
@@ -159,13 +160,13 @@ def test_03_create_new_webcast(driver, env):
 
     time.sleep(3)
     wait.until(EC.presence_of_element_located((By.ID, "swal2-html-container")))
-    print(f"✅ Webcast '{env['new_webcast_title']}' created successfully.")
+    print(f"✅ Webcast '{config['new_webcast_title']}' created successfully.")
 
 
-def test_04_activate_and_manage_webcast(driver, env):
+def test_04_activate_and_manage_webcast(driver, config):
     wait = WebDriverWait(driver, 30)
     
-    target_event_name = env["new_webcast_title"]
+    target_event_name = config["new_webcast_title"]
 
     def get_webcast_summaries():
         return wait.until(
@@ -225,7 +226,7 @@ def test_04_activate_and_manage_webcast(driver, env):
     pytest.fail(f"Webcast '{target_event_name}' not found in summaries.")
 
 
-def test_05_upload_slide_and_video(driver, env):
+def test_05_upload_slide_and_video(driver, config):
     """Test: Upload slide and video content in both Preview and Live modes."""
     wait = WebDriverWait(driver, 30)
 
@@ -243,7 +244,7 @@ def test_05_upload_slide_and_video(driver, env):
         EC.presence_of_element_located((By.XPATH, "(//input[@type='file'])[1]"))
     )
     driver.execute_script("arguments[0].style.display = 'block';", slide_upload)
-    slide_upload.send_keys(env["slide_path"])
+    slide_upload.send_keys(config["slide_path"])
 
     # Save preview slide
     time.sleep(1)
@@ -255,7 +256,7 @@ def test_05_upload_slide_and_video(driver, env):
     # Wait for success popup
     time.sleep(5)
     wait.until(EC.presence_of_element_located((By.ID, "swal2-html-container")))
-    print(f"✅ Slide uploaded: {env['slide_path']}")
+    print(f"✅ Slide uploaded: {config['slide_path']}")
 
     # ----------------------------------------------------------------------------------------------------------------------
     # STEP 2: Switch Status to LIVE and Upload Slide
@@ -282,7 +283,7 @@ def test_05_upload_slide_and_video(driver, env):
         EC.presence_of_element_located((By.XPATH, "(//input[@type='file'])[1]"))
     )
     driver.execute_script("arguments[0].style.display = 'block';", slide_upload)
-    slide_upload.send_keys(env["slide_path"])
+    slide_upload.send_keys(config["slide_path"])
 
     # Save live slide
     time.sleep(1)
@@ -316,7 +317,7 @@ def test_05_upload_slide_and_video(driver, env):
     )
     driver.execute_script("arguments[0].scrollIntoView(true);", video_upload)
     driver.execute_script("arguments[0].style.display = 'block';", video_upload)
-    video_upload.send_keys(env["video_path"])
+    video_upload.send_keys(config["video_path"])
 
     # Save preview video
     preview_save_btn = wait.until(
@@ -331,7 +332,7 @@ def test_05_upload_slide_and_video(driver, env):
     print("✅ Webcast content uploaded successfully.")
 
 
-def test_06_configure_webcast_layout(driver, env):
+def test_06_configure_webcast_layout(driver, config):
     """Configure webcast layout settings and verify UI elements."""
     wait = WebDriverWait(driver, 30)
 
