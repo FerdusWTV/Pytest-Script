@@ -1,6 +1,14 @@
 Linux Chrome Driver -
 https://storage.googleapis.com/chrome-for-testing-public/142.0.7444.175/linux64/chromedriver-linux64.zip
 
+# Change the env
+
+set the env for Development: --env=dev
+set the env for Production: --env=prod
+```
+pytest -v --env=dev  --html=report.html --self-contained-html
+```
+
 
 ## This is a ChatGPT conversation for how to use it with jenkins and stop the build.
 =================================================================================
