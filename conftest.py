@@ -28,6 +28,7 @@ def config(request):
             "password": os.getenv("PASSWORD_PROD"),
             "target_portal": os.getenv("TARGET_PORTAL"),
             "new_webcast_title": os.getenv("NEW_WEBCAST_TITLE"),
+            "webcast_title": os.getenv("WEBCAST_TITLE"),
             "slide_path": os.getenv("SLIDE_PATH"),
             "video_path": os.getenv("VIDEO_PATH"),
         }
@@ -38,6 +39,7 @@ def config(request):
         "password": os.getenv("PASSWORD"),
         "target_portal": os.getenv("TARGET_PORTAL"),
         "new_webcast_title": os.getenv("NEW_WEBCAST_TITLE"),
+        "webcast_title": os.getenv("WEBCAST_TITLE"),
         "slide_path": os.getenv("SLIDE_PATH"),
         "video_path": os.getenv("VIDEO_PATH"),
     }

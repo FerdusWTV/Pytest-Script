@@ -26,6 +26,13 @@ So in your pipeline or terminal, you don’t need extra code — just let pytest
 
 ```bash
 pytest -v --html=report.html --self-contained-html
+
+pytest -v --env=dev  --html=report.html --self-contained-html
+
+For stopping in the first fail
+=================================
+pytest -v --maxfail=1 --disable-warnings --html=report.html --self-contained-html
+
 ```
 
 If **any test fails**, pytest will return **exit code 1**,
