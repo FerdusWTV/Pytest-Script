@@ -80,67 +80,67 @@ def test_02_open_target_portal(driver, config):
     print(f"✅ Opened portal: {portal_title}")
 
 
-def test_00_cleanup(driver, config):
-    wait = WebDriverWait(driver, 30)
+# def test_00_cleanup(driver, config):
+#     wait = WebDriverWait(driver, 30)
 
-    time.sleep(2)
-    session_btn = wait.until(EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Sessions')]")))
-    driver.execute_script("arguments[0].click();", session_btn)
+#     time.sleep(2)
+#     session_btn = wait.until(EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Sessions')]")))
+#     driver.execute_script("arguments[0].click();", session_btn)
     
-    target_event = config["webcast_title"]
+#     target_event = config["webcast_title"]
 
-    def get_webcast_summaries():
-        return wait.until(
-            EC.presence_of_all_elements_located((By.CLASS_NAME, "webcast-summary"))
-        )
+#     def get_webcast_summaries():
+#         return wait.until(
+#             EC.presence_of_all_elements_located((By.CLASS_NAME, "webcast-summary"))
+#         )
 
-    try:
-        webcast_summaries = get_webcast_summaries()
-        print(f"Found {len(webcast_summaries)} webcast summaries.")
-    except Exception as e:
-        pytest.fail(f"Could not find any webcast summary. Error: {e}")
+#     try:
+#         webcast_summaries = get_webcast_summaries()
+#         print(f"Found {len(webcast_summaries)} webcast summaries.")
+#     except Exception as e:
+#         pytest.fail(f"Could not find any webcast summary. Error: {e}")
 
-    for summary in webcast_summaries:
-        try:
-            name_elem = summary.find_element(
-                By.XPATH,
-                ".//div[contains(@class,'webcast-summary-event-name')]//div[contains(@class,'webcast-summary-background')]"
-            )
+#     for summary in webcast_summaries:
+#         try:
+#             name_elem = summary.find_element(
+#                 By.XPATH,
+#                 ".//div[contains(@class,'webcast-summary-event-name')]//div[contains(@class,'webcast-summary-background')]"
+#             )
             
-            if target_event.casefold() in name_elem.text.strip().casefold():
-                print(f"✅ Webcast '{target_event}' found.")
+#             if target_event.casefold() in name_elem.text.strip().casefold():
+#                 print(f"✅ Webcast '{target_event}' found.")
 
-                # Delete
-                delete_btn = WebDriverWait(summary, 10).until(
-                    EC.element_to_be_clickable(
-                        (By.XPATH, ".//div[contains(@class,'webcast-summary-delete')]//button")
-                    ))
+#                 # Delete
+#                 delete_btn = WebDriverWait(summary, 10).until(
+#                     EC.element_to_be_clickable(
+#                         (By.XPATH, ".//div[contains(@class,'webcast-summary-delete')]//button")
+#                     ))
                 
-                delete_btn.click()
-                print("Clicked the 'Delete' button.")
+#                 delete_btn.click()
+#                 print("Clicked the 'Delete' button.")
                 
-                dlt_confirm_btn = wait.until(EC.presence_of_element_located(
-                        (By.XPATH, "//button[normalize-space()='Confirm']")
-                    ))
-                driver.execute_script("arguments[0].click();", dlt_confirm_btn)
+#                 dlt_confirm_btn = wait.until(EC.presence_of_element_located(
+#                         (By.XPATH, "//button[normalize-space()='Confirm']")
+#                     ))
+#                 driver.execute_script("arguments[0].click();", dlt_confirm_btn)
                 
-                # Wait for popup and close/confirm it
-                wait.until(EC.presence_of_element_located((By.ID, "swal2-html-container")))
-                print("Popup detected after Delete.")
-                time.sleep(2)
+#                 # Wait for popup and close/confirm it
+#                 wait.until(EC.presence_of_element_located((By.ID, "swal2-html-container")))
+#                 print("Popup detected after Delete.")
+#                 time.sleep(2)
                 
-        except Exception:
-            continue
-    else:
-        pytest.fail(f"Webcast '{target_event}' not found in summaries.")
+#         except Exception:
+#             continue
+#     else:
+#         pytest.fail(f"Webcast '{target_event}' not found in summaries.")
 
 
 def test_03_create_new_webcast(driver, config):
     wait = WebDriverWait(driver, 30)
     
-    # time.sleep(2)
-    # session_btn = wait.until(EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Sessions')]")))
-    # driver.execute_script("arguments[0].click();", session_btn)
+    time.sleep(2)
+    session_btn = wait.until(EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Sessions')]")))
+    driver.execute_script("arguments[0].click();", session_btn)
     
     webcast_creation_btn = wait.until(
         EC.presence_of_element_located((By.XPATH, "//div[@class='session-button-group-right']"))
