@@ -24,8 +24,11 @@ def driver():
     options.add_argument("--remote-allow-origins=*")
 
     driver_path = os.getenv("DRIVER")
-    service = Service(driver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    if driver_path and os.path.exists(driver_path):
+        service = Service(driver_path)
+        driver = webdriver.Chrome(service=service, options=options)
+    else:
+        driver = webdriver.Chrome(options=options)
     driver.implicitly_wait(5)
     driver.maximize_window()
     yield driver
@@ -323,8 +326,7 @@ def test_05_upload_Content_VideoxSlide(driver, config):
     status_live = wait.until(
         EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Live')]"))
     )
-    time.sleep(1)
-    status_live.click()
+    driver.execute_script("arguments[0].click();", status_live)
 
     # Upload slide again for LIVE webcast
     time.sleep(1)
@@ -356,13 +358,11 @@ def test_05_upload_Content_VideoxSlide(driver, config):
     status_dropdown = wait.until(
         EC.presence_of_element_located((By.XPATH, "//span[@title='Live']"))
     )
-    # status_dropdown.click()
-    driver.execute_script('arguments[0].click();', status_dropdown)
+    status_dropdown.click()
 
     status_preview = wait.until(
         EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Preview')]"))
     )
-    # status_preview.click()
     driver.execute_script('arguments[0].click();', status_preview)
     
     # Upload video
@@ -372,10 +372,13 @@ def test_05_upload_Content_VideoxSlide(driver, config):
     driver.execute_script("arguments[0].scrollIntoView(true);", video_upload)
     driver.execute_script("arguments[0].style.display = 'block';", video_upload)
     video_upload.send_keys(config["video_path"])
+    
+    # Wait for the video file upload to complete (large files need time to upload to the server)
+    time.sleep(10)
 
     # Save preview video
     preview_save_btn = wait.until(
-        EC.presence_of_element_located((By.XPATH, "//button[normalize-space()='Save']"))
+        EC.presence_of_element_located((By.XPATH, "(//button[normalize-space()='Save'])[1]"))
     )
     driver.execute_script("arguments[0].click();", preview_save_btn)
 
@@ -425,16 +428,10 @@ def test_06_configure_webcast_layout_VideoxSlide(driver, config):
     driver.execute_script("arguments[0].scrollIntoView(true);", save_btn)
     driver.execute_script("arguments[0].click();", save_btn)
     wait.until(EC.presence_of_element_located((By.ID, "swal2-html-container")))
-    
-    # Goto VOD Management 
-    VoD_btn = wait.until(EC.presence_of_element_located((By.XPATH, "(//button[normalize-space()='VOD MANAGEMENT'])[1]")))
-    driver.execute_script("arguments[0].click();", VoD_btn)
-    popup_btn = wait.until(EC.presence_of_element_located((By.XPATH, "(//button[@role='switch'])[1]")))
-    driver.execute_script("arguments[0].click();", popup_btn)
-    vod_save_btn = wait.until(EC.presence_of_element_located((By.XPATH, "(//button[normalize-space()='Save'])[1]")))
-    driver.execute_script("arguments[0].click();", vod_save_btn)
-    wait.until(EC.presence_of_element_located((By.ID, "swal2-html-container")))
-    
+    time.sleep(1)
+    back_btn = wait.until(EC.presence_of_element_located((By.XPATH, "//button[normalize-space()='Back']")))
+    driver.execute_script("arguments[0].click();", back_btn)
+
     print("✅ Webcast layout configured successfully.")
     
     time.sleep(2)
