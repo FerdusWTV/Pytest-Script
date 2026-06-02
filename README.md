@@ -8,6 +8,9 @@ set the env for Production: --env=prod
 ```
 pytest -v --env=dev  --html=report.html --self-contained-html
 ```
+```
+venv\Scripts\pytest -v --html=report.html --self-contained-html
+```
 ---
 ---
 
