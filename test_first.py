@@ -272,6 +272,9 @@ def _configure_layout_and_go_back(driver, wait):
     time.sleep(2)
 
 
+
+
+
 # ----------------------- TEST CASES -----------------------
 
 def test_01_login(driver, config):
