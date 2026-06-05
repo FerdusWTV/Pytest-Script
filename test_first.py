@@ -160,12 +160,21 @@ def _activate_and_manage_webcast(driver, wait, title):
 
 def _upload_content(driver, wait, config):
     """Upload slide (Preview + Live) and video (Preview)."""
+    # --- Open Webcast Details panel ---
+    time.sleep(1)
+    details_btn = wait.until(
+        EC.presence_of_element_located((By.XPATH, "(//input[@id='webcastType'])[1]"))
+    )
+    driver.execute_script("arguments[0].click();", details_btn)
+
+
     # --- Open Content panel ---
     time.sleep(1)
     content_btn = wait.until(
         EC.presence_of_element_located((By.XPATH, "(//button[normalize-space()='Content'])[1]"))
     )
     driver.execute_script("arguments[0].click();", content_btn)
+    content_btn.send_keys()
 
     # --- PREVIEW: Upload Slide ---
     slide_upload = wait.until(EC.presence_of_element_located((By.XPATH, "(//input[@type='file'])[1]")))
@@ -278,9 +287,9 @@ def _configure_layout_and_go_back(driver, wait):
 # ----------------------- TEST CASES -----------------------
 
 def test_01_login(driver, config):
-    driver.get(config["url"])
-    driver.find_element(By.ID, 'email').send_keys(config["email"])
-    driver.find_element(By.ID, 'password').send_keys(config["password"])
+    driver.get(config["url_org"])
+    driver.find_element(By.ID, 'email').send_keys(config["email_org"])
+    driver.find_element(By.ID, 'password').send_keys(config["password_org"])
     driver.find_element(By.CLASS_NAME, 'login-button').click()
 
     wait = WebDriverWait(driver, 60)

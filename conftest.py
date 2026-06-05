@@ -36,6 +36,7 @@ def config(request):
                 os.getenv("NEW_WEBCAST_TITLE_2", "Automated Webcast AxS - 002"),
                 os.getenv("NEW_WEBCAST_TITLE_3", "Automated Webcast V - 003"),
                 os.getenv("NEW_WEBCAST_TITLE_4", "Automated Webcast A - 004"),
+                os.getenv("NEW_WEBCAST_TITLE_5", "Automated Webcast AxE - 005"),
             ],
         }
 
@@ -53,8 +54,17 @@ def config(request):
             os.getenv("NEW_WEBCAST_TITLE_2", "Automated Webcast AxS - 002"),
             os.getenv("NEW_WEBCAST_TITLE_3", "Automated Webcast V - 003"),
             os.getenv("NEW_WEBCAST_TITLE_4", "Automated Webcast A - 004"),
+            os.getenv("NEW_WEBCAST_TITLE_5", "Automated Webcast AxE - 005"),
         ],
+        "webcast_types": [
+            os.getenv("WEBCAST_TYPE_VxS", "Video & slides (default)"),
+            os.getenv("WEBCAST_TYPE_AxS", "Audio & slides"),
+            os.getenv("WEBCAST_TYPE_V", "Video only"),
+            os.getenv("WEBCAST_TYPE_A", "Audio only"),
+            os.getenv("WEBCAST_TYPE_AxE", "Audio only"),
+        ]
     }
+
 
 # -----------------------------
 # Show Selenium version in console
