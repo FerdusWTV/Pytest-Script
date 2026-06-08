@@ -26,9 +26,13 @@ def config(request):
             "url": os.getenv("URL_PROD"),
             "email": os.getenv("EMAIL_PROD"),
             "password": os.getenv("PASSWORD_PROD"),
+            "url_org": os.getenv("URL_ORG_PROD") or os.getenv("URL_PROD"),
+            "email_org": os.getenv("EMAIL_ORG_PROD") or os.getenv("EMAIL_PROD"),
+            "password_org": os.getenv("PASSWORD_ORG_PROD") or os.getenv("PASSWORD_PROD"),
             "target_portal": os.getenv("TARGET_PORTAL"),
             "new_webcast_title": os.getenv("NEW_WEBCAST_TITLE"),
             "webcast_title": os.getenv("WEBCAST_TITLE"),
+            "web": os.getenv("WEB", ""),
             "slide_path": os.getenv("SLIDE_PATH"),
             "video_path": os.getenv("VIDEO_PATH"),
             "webcast_titles": [
@@ -38,15 +42,24 @@ def config(request):
                 os.getenv("NEW_WEBCAST_TITLE_4", "Automated Webcast A - 004"),
                 os.getenv("NEW_WEBCAST_TITLE_5", "Automated Webcast AxE - 005"),
             ],
+            "webcast_type_1": os.getenv("WEBCAST_TYPE_VxS", "Video & slides (default)"),
+            "webcast_type_2": os.getenv("WEBCAST_TYPE_AxS", "Audio & slides"),
+            "webcast_type_3": os.getenv("WEBCAST_TYPE_V", "Video only"),
+            "webcast_type_4": os.getenv("WEBCAST_TYPE_A", "Audio only"),
+            "webcast_type_5": os.getenv("WEBCAST_TYPE_AxE", "Audio only"),
         }
 
     return {
         "url": os.getenv("URL"),
         "email": os.getenv("EMAIL"),
         "password": os.getenv("PASSWORD"),
+        "url_org": os.getenv("URL_ORG") or os.getenv("URL"),
+        "email_org": os.getenv("EMAIL_ORG") or os.getenv("EMAIL"),
+        "password_org": os.getenv("PASSWORD_ORG") or os.getenv("PASSWORD"),
         "target_portal": os.getenv("TARGET_PORTAL"),
         "new_webcast_title": os.getenv("NEW_WEBCAST_TITLE"),
         "webcast_title": os.getenv("WEBCAST_TITLE"),
+        "web": os.getenv("WEB", ""),
         "slide_path": os.getenv("SLIDE_PATH"),
         "video_path": os.getenv("VIDEO_PATH"),
         "webcast_titles": [
@@ -56,13 +69,11 @@ def config(request):
             os.getenv("NEW_WEBCAST_TITLE_4", "Automated Webcast A - 004"),
             os.getenv("NEW_WEBCAST_TITLE_5", "Automated Webcast AxE - 005"),
         ],
-        "webcast_types": [
-            os.getenv("WEBCAST_TYPE_VxS", "Video & slides (default)"),
-            os.getenv("WEBCAST_TYPE_AxS", "Audio & slides"),
-            os.getenv("WEBCAST_TYPE_V", "Video only"),
-            os.getenv("WEBCAST_TYPE_A", "Audio only"),
-            os.getenv("WEBCAST_TYPE_AxE", "Audio only"),
-        ]
+        "webcast_type_1": os.getenv("WEBCAST_TYPE_VxS", "Video & slides (default)"),
+        "webcast_type_2": os.getenv("WEBCAST_TYPE_AxS", "Audio & slides"),
+        "webcast_type_3": os.getenv("WEBCAST_TYPE_V", "Video only"),
+        "webcast_type_4": os.getenv("WEBCAST_TYPE_A", "Audio only"),
+        "webcast_type_5": os.getenv("WEBCAST_TYPE_AxE", "Audio only"),
     }
 
 
