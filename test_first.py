@@ -202,10 +202,12 @@ def _activate_and_manage_webcast(driver, wait, title):
 
 SLIDE_INPUT_XPATH = "//input[@type='file' and contains(@accept,'pdf')]"
 VIDEO_INPUT_XPATH = "//input[@type='file' and contains(@accept,'video')]"
+HEADSHOT_INPUT_XPATH = "//input[@type='file' and @accept='image/jpeg,image/png']"
+AUDIO_INPUT_XPATH = "//input[@type='file' and @accept='audio/x-m4a,audio/m4a']"
 SAVE_BTN_XPATH = "(//button[normalize-space()='Save'])[1]"
 
 
-def _upload_content(driver, wait, config):
+def _upload_content_VxS(driver, wait, config):
     """Upload slide (Preview + Live) and video (Preview).
 
     The dropzone file inputs are targeted by their `accept` attribute, and the
@@ -277,6 +279,67 @@ def _upload_content(driver, wait, config):
     _wait_for_swal(driver, "preview_video_save", timeout=180, expect="success")
     print(f"  ✅ Preview video saved.")
     time.sleep(2)
+
+
+def _upload_content_AxS(driver, wait, config):
+    """
+    Upload only Slide (Preview + Live) — no Video.
+    AxS = Audio, Slides & headshots.
+    """
+
+    # --- Open Content panel ---
+    time.sleep(1)
+    content_btn = wait.until(
+        EC.presence_of_element_located((By.XPATH, "(//button[normalize-space()='Content'])[1]"))
+    )
+    driver.execute_script("arguments[0].click();", content_btn)
+    time.sleep(2)
+
+    # --- PREVIEW: Upload Slide ---
+    slide_upload = wait.until(EC.presence_of_element_located((By.XPATH, SLIDE_INPUT_XPATH)))
+    slide_upload.send_keys(config["slide_path"])
+    time.sleep(5)
+
+    preview_save_btn = wait.until(EC.presence_of_element_located((By.XPATH, SAVE_BTN_XPATH)))
+    driver.execute_script("arguments[0].click();", preview_save_btn)
+    _wait_for_swal(driver, "preview_slide_save", timeout=60, expect="success")
+    print(f"  ✅ Preview slide saved.")
+    time.sleep(2)
+
+    # --- Switch to LIVE ---
+    status_dropdown = wait.until(EC.presence_of_element_located((By.XPATH, "//span[@title='Preview']")))
+    driver.execute_script("arguments[0].scrollIntoView({block:'center'});", status_dropdown)
+    time.sleep(0.5)
+    status_dropdown.click()
+    status_live = wait.until(EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Live')]")))
+    driver.execute_script("arguments[0].click();", status_live)
+
+    # --- LIVE: Upload Slide ---
+    time.sleep(1)
+    content_btn = wait.until(
+        EC.presence_of_element_located((By.XPATH, "(//button[normalize-space()='Content'])[1]"))
+    )
+    driver.execute_script("arguments[0].click();", content_btn)
+    time.sleep(2)
+
+    slide_upload = wait.until(EC.presence_of_element_located((By.XPATH, SLIDE_INPUT_XPATH)))
+    slide_upload.send_keys(config["slide_path"])
+    time.sleep(5)
+
+    live_save_btn = wait.until(EC.presence_of_element_located((By.XPATH, SAVE_BTN_XPATH)))
+    driver.execute_script("arguments[0].click();", live_save_btn)
+    _wait_for_swal(driver, "live_slide_save", timeout=60, expect="success")
+    print(f"  ✅ Live slide saved.")
+    time.sleep(2)
+
+    # --- Switch back to PREVIEW ---
+    status_dropdown = wait.until(EC.presence_of_element_located((By.XPATH, "//span[@title='Live']")))
+    driver.execute_script("arguments[0].scrollIntoView({block:'center'});", status_dropdown)
+    time.sleep(0.5)
+    status_dropdown.click()
+    status_preview = wait.until(EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Preview')]")))
+    driver.execute_script("arguments[0].click();", status_preview)
+
 
 
 def _configure_layout_and_go_back(driver, wait):
